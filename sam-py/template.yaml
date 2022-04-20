@@ -1,0 +1,51 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Transform: AWS::Serverless-2016-10-31
+Description: >
+  sam-py
+
+  Test SAM Template for sam-py
+
+Resources:
+  NotificationStateMachine:
+    Type: AWS::Serverless::StateMachine
+    Properties:
+      DefinitionUri: statemachine/notification.asl.json
+      DefinitionSubstitutions:
+        SendNotificationFunctionArn: !GetAtt SendNotificationFunction.Arn
+      Policies:
+        - LambdaInvokePolicy:
+            FunctionName: !Ref SendNotificationFunction
+  
+  SnsTopic:
+    Type: AWS::SNS::Topic
+    Properties:
+      TopicName: "sns-sample-topic"
+
+  SendNotificationFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: functions/send_notification/
+      Handler: app.lambda_handler
+      Runtime: python3.9
+      Architectures:
+        - x86_64
+      Environment:
+        Variables:
+          SNS_TOPIC_ARN: !Ref SnsTopic
+      Policies:
+        - SNSPublishMessagePolicy:
+            TopicName: !GetAtt SnsTopic.TopicName
+      VpcConfig:
+        SubnetIds:
+          - '{{resolve:ssm:idmz-private-subnet-a-id:1}}'
+          - '{{resolve:ssm:idmz-private-subnet-b-id:1}}'
+        SecurityGroupIds:
+          - '{{resolve:ssm:idmz-notification-sg-id:1}}'
+
+Outputs:
+  NotificationStateMachineArn:
+    Description: "Notification State machine ARN"
+    Value: !Ref NotificationStateMachine
+  NotificationStateMachineRoleArn:
+    Description: "IAM Role created for Notification State machine based on the specified SAM Policy Templates"
+    Value: !GetAtt NotificationStateMachineRole.Arn

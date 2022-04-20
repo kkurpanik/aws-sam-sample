@@ -1,0 +1,12 @@
+### AWS SAM ###
+.aws-sam/
+samconfig.toml
+
+### Python ###
+venv
+
+### Terraform ###
+.terraform/
+.terraform.lock.hcl
+terraform.tfstate
+terraform.tfstate.backup
