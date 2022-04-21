@@ -44,12 +44,6 @@ resource "aws_subnet" "idmz-private-subnet-a" {
     }
 }
 
-resource "aws_ssm_parameter" "idmz-private-subnet-a-id" {
-    name = "idmz-private-subnet-a-id"
-    type = "String"
-    value = aws_subnet.idmz-private-subnet-a.id
-}
-
 resource "aws_subnet" "idmz-private-subnet-b" {
     vpc_id = aws_vpc.idmz-vpc.id
     cidr_block = "10.1.2.0/24"
@@ -60,10 +54,10 @@ resource "aws_subnet" "idmz-private-subnet-b" {
     }
 }
 
-resource "aws_ssm_parameter" "idmz-private-subnet-b-id" {
-    name = "idmz-private-subnet-b-id"
-    type = "String"
-    value = aws_subnet.idmz-private-subnet-b.id
+resource "aws_ssm_parameter" "idmz-private-subnet-ids" {
+    name = "idmz-private-subnet-ids"
+    type = "StringList"
+    value = join(",", [aws_subnet.idmz-private-subnet-a.id, aws_subnet.idmz-private-subnet-b.id ])
 }
 
 resource "aws_security_group" "idmz-notification-sg" {
