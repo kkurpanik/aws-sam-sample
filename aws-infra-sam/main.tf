@@ -19,8 +19,8 @@ terraform {
 
 provider "aws" {
   region = "us-east-1"
-  access_key = "AKIAZT6ITD47YJRL5E5U"
-  secret_key = "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"
+  access_key = "XXX"
+  secret_key = "YYY"
 }
 
 resource "aws_vpc" "idmz-vpc" {
